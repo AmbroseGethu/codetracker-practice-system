@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeTracker - 3-7-15 Practice System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-code"></i>
+                <h1>CodeTracker</h1>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="totalProblems">0</span>
+                    <span class="stat-label">Total Problems</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="dueToday">0</span>
+                    <span class="stat-label">Due Today</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="streakCount">0</span>
+                    <span class="stat-label">Day Streak</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="add-problem-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-plus-circle"></i> Add New Problem</h2>
+                </div>
+                <form id="problemForm" class="problem-form">
+                    <div class="form-group">
+                        <label for="problemName">Problem Name</label>
+                        <input type="text" id="problemName" placeholder="Enter problem name" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="problemLink">Problem Link (Optional)</label>
+                            <input type="url" id="problemLink" placeholder="https://...">
+                        </div>
+                        <div class="form-group">
+                            <label for="difficulty">Difficulty</label>
+                            <select id="difficulty">
+                                <option value="Easy">Easy</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Hard">Hard</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="category">Category</label>
+                            <select id="category">
+                                <option value="Array">Array</option>
+                                <option value="String">String</option>
+                                <option value="Dynamic Programming">Dynamic Programming</option>
+                                <option value="Graph">Graph</option>
+                                <option value="Tree">Tree</option>
+                                <option value="Math">Math</option>
+                                <option value="Greedy">Greedy</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="platform">Platform</label>
+                            <select id="platform">
+                                <option value="LeetCode">LeetCode</option>
+                                <option value="Codeforces">Codeforces</option>
+                                <option value="AtCoder">AtCoder</option>
+                                <option value="CodeChef">CodeChef</option>
+                                <option value="HackerRank">HackerRank</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="add-btn">
+                        <i class="fas fa-plus"></i> Add Problem
+                    </button>
+                </form>
+            </div>
+
+            <div class="problems-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-calendar-check"></i> Problems Due Today</h2>
+                    <div class="filter-controls">
+                        <select id="filterCategory">
+                            <option value="">All Categories</option>
+                            <option value="Array">Array</option>
+                            <option value="String">String</option>
+                            <option value="Dynamic Programming">Dynamic Programming</option>
+                            <option value="Graph">Graph</option>
+                            <option value="Tree">Tree</option>
+                            <option value="Math">Math</option>
+                            <option value="Greedy">Greedy</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <select id="filterDifficulty">
+                            <option value="">All Difficulties</option>
+                            <option value="Easy">Easy</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Hard">Hard</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="dueTodayList" class="problems-list">
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-day"></i>
+                        <p>No problems due today!</p>
+                        <small>Add some problems to start tracking your practice schedule.</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="problems-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-history"></i> All Problems</h2>
+                    <div class="search-controls">
+                        <input type="text" id="searchInput" placeholder="Search problems..." class="search-input">
+                        <button id="clearAll" class="clear-btn">
+                            <i class="fas fa-trash"></i> Clear All
+                        </button>
+                    </div>
+                </div>
+                <div id="allProblemsList" class="problems-list">
+                    <div class="empty-state">
+                        <i class="fas fa-code"></i>
+                        <p>No problems added yet!</p>
+                        <small>Start by adding your first problem above.</small>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Problem Details</h3>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <div id="confirmModal" class="modal">
+        <div class="modal-content confirm-modal">
+            <div class="confirm-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3 id="confirmTitle">Confirm Action</h3>
+            </div>
+            <div class="confirm-body">
+                <p id="confirmMessage">Are you sure you want to proceed?</p>
+            </div>
+            <div class="confirm-actions">
+                <button id="confirmCancel" class="confirm-btn cancel-btn">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button id="confirmYes" class="confirm-btn confirm-btn">
+                    <i class="fas fa-check"></i> Yes, Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>

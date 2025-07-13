@@ -1,0 +1,22 @@
+{
+  "name": "codetracker-practice-system",
+  "version": "1.0.0",
+  "description": "A competitive programming practice system following the 3-7-15 spaced repetition rule",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python3 -m http.server 8000",
+    "build": "echo 'No build required for static site'",
+    "start": "python3 -m http.server 8000"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "keywords": [
+    "competitive-programming",
+    "spaced-repetition",
+    "practice-system",
+    "3-7-15-rule"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
