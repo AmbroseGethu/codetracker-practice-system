@@ -198,19 +198,29 @@ class CodeTracker {
         );
     }
 
-    markCompleted(problemId, date = null) {
+    async markCompleted(problemId, date = null) {
         const problem = this.problems.find(p => p.id === problemId);
         if (!problem) return;
 
         const targetDate = date || new Date().toISOString().split('T')[0];
         
         if (!problem.completedDates.includes(targetDate)) {
-            problem.completedDates.push(targetDate);
-            this.saveProblems();
-            this.updateStats();
-            this.renderProblems();
-            this.renderDueToday();
-            this.showCelebration('Great job! Problem marked as completed! 🎯');
+            try {
+                // Update database
+                await this.db.markProblemCompleted(problemId, targetDate);
+                
+                // Update local array
+                problem.completedDates.push(targetDate);
+                
+                // Update UI
+                this.updateStats();
+                this.renderProblems();
+                this.renderDueToday();
+                this.showCelebration('Great job! Problem marked as completed! 🎯');
+            } catch (error) {
+                console.error('Failed to mark problem as completed:', error);
+                this.showError('Failed to mark problem as completed. Please try again.');
+            }
         }
     }
 
@@ -222,26 +232,46 @@ class CodeTracker {
             'Delete Problem',
             `Are you sure you want to delete "${problem.name}"? This action cannot be undone.`,
             'Yes, Delete',
-            () => {
-                this.problems = this.problems.filter(p => p.id !== problemId);
-                this.saveProblems();
-                this.updateStats();
-                this.renderProblems();
-                this.renderDueToday();
-                this.showCelebration('Problem deleted successfully');
+            async () => {
+                try {
+                    // Delete from database
+                    await this.db.deleteProblem(problemId);
+                    
+                    // Remove from local array
+                    this.problems = this.problems.filter(p => p.id !== problemId);
+                    
+                    // Update UI
+                    this.updateStats();
+                    this.renderProblems();
+                    this.renderDueToday();
+                    this.showCelebration('Problem deleted successfully');
+                } catch (error) {
+                    console.error('Failed to delete problem:', error);
+                    this.showError('Failed to delete problem. Please try again.');
+                }
             }
         );
     }
 
-    clearAllProblems() {
+    async clearAllProblems() {
         console.log('clearAllProblems called, current problems:', this.problems.length);
-        this.problems = [];
-        this.saveProblems();
-        this.updateStats();
-        this.renderProblems();
-        this.renderDueToday();
-        this.showCelebration('All problems cleared');
-        console.log('All problems cleared successfully');
+        try {
+            // Clear from database
+            await this.db.clearAllProblems();
+            
+            // Clear local array
+            this.problems = [];
+            
+            // Update UI
+            this.updateStats();
+            this.renderProblems();
+            this.renderDueToday();
+            this.showCelebration('All problems cleared');
+            console.log('All problems cleared successfully');
+        } catch (error) {
+            console.error('Failed to clear all problems:', error);
+            this.showError('Failed to clear all problems. Please try again.');
+        }
     }
 
     searchProblems(query) {
